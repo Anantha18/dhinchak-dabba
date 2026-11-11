@@ -74,7 +74,7 @@ const V={
 };
 
 /* ---- pattern helpers ---- */
-function mkfq(scale){return (deg,oct)=>{const n=scale.length,o=Math.floor(deg/n),d=((deg%n)+n)%n;return 73.416*Math.pow(2,oct-2+o+scale[d]/12);};}
+function mkfq(scale,root){const base=73.416*Math.pow(2,(root||0)/12);return (deg,oct)=>{const n=scale.length,o=Math.floor(deg/n),d=((deg%n)+n)%n;return base*Math.pow(2,oct-2+o+scale[d]/12);};}
 function drum(pat,map){pat=pat.replace(/\s/g,'');return (s,t,o)=>{const f=map[pat[s%pat.length]];if(f){f(t,o);return 1;}return 0;};}
 function mel(L,oct,evs,fn){const m={};evs.forEach((e,i)=>{const p=evs[i-1];m[e[0]]={d:e[1],l:e[2]||1,p:(p&&p[0]+(p[2]||1)===e[0])?p[1]:null};});
   return (s,t,o,pk)=>{const e=m[s%L];if(!e)return 0;fn(t,o,pk.fq(e.d,oct),e.l*pk.sd,e.p==null?0:pk.fq(e.p,oct));return 1;};}
@@ -82,4 +82,11 @@ function chords(L,oct,evs,fn){const m={};evs.forEach(e=>m[e[0]]=e);return (s,t,o
 function at(L,map){return (s,t,o,pk)=>{const f=map[s%L];if(f){f(t,o,pk.sd);return 1;}return 0;};}
 function syl(L,evs,base){const m={};evs.forEach(e=>m[e[0]]=e);return (s,t,o,pk)=>{const e=m[s%L];if(!e)return 0;if(e[1]!=='.')V.cons(t,o,e[1],.35);const hi=e[1]==='d'?1.5:(e[1]==='k'?1.12:1);V.vox(t+.012,o,base*hi,(e[3]||.72)*pk.sd,e[1]==='.'?'m':e[2],e[2],.42);return 1;};}
 
+// extra voices for the regional and festival packs
+V.wood=(t,o,v,f)=>{f=f||1200;chain(O('triangle',f,t,t+.06),G(t,v,.001,.035),o);chain(N(t,t+.03),F('bandpass',f*2,3),G(t,v*.6,.001,.015),o);};
+V.jing=(t,o,v,d)=>{d=d||.12;[3100,4300,5900,7400].forEach((f,i)=>chain(O('square',f*(1+Math.random()*.01),t,t+d+.02),F('highpass',2500),G(t,v*.1,.001,d*(1-i*.15)),o));chain(N(t,t+d+.01),F('highpass',6000),G(t,v*.45,.001,d*.6),o);};
+V.whoosh=(t,o,v,d,up)=>{const b=F('bandpass',up?400:3000,2.5);b.frequency.setValueAtTime(up?400:3000,t);b.frequency.exponentialRampToValueAtTime(up?3500:350,t+d);chain(N(t,t+d+.4),b,GS(t,v,d*.4,d*.5,d*.3),o);};
+V.crackle=(t,o,v,d)=>{for(let i=0;i<6;i++){const tt=t+Math.random()*d;chain(N(tt,tt+.03),F('highpass',2000+Math.random()*3000),G(tt,v*(.4+Math.random()*.6),.001,.012),o);}};
+V.riser=(t,o,v,d)=>{const os=O('sawtooth',220,t,t+d+.06);os.frequency.exponentialRampToValueAtTime(880,t+d);const lp=F('lowpass',600,4);lp.frequency.setValueAtTime(600,t);lp.frequency.exponentialRampToValueAtTime(5000,t+d);const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+d*.9);g.gain.linearRampToValueAtTime(.0001,t+d+.04);chain(os,lp,g,o);};
+V.hoof=(t,o,v)=>{chain(O('sine',520,t,t+.07),G(t,v,.001,.04),o);chain(N(t,t+.04),F('bandpass',900,4),G(t,v*.7,.001,.02),o);};
 export {V,mkfq,drum,mel,chords,at,syl,G,GS,O,N,F,K,chain,vib};

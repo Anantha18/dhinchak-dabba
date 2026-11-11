@@ -100,6 +100,8 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,52px);lin
 .chip{touch-action:manipulation;user-select:none;-webkit-user-select:none;border:2px solid var(--c);background:var(--panel);border-radius:12px;padding:6px 2px 5px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;min-width:0}
 .chip i{font-style:normal;font-size:23px;line-height:1.1}
 .chip span{font-size:10px;line-height:1.12;font-weight:600;text-align:center;overflow-wrap:break-word;max-width:100%}
+.chip.nudge{animation:nudge 1.1s ease-in-out infinite;border-color:var(--chuna)}
+@keyframes nudge{0%,100%{box-shadow:0 0 0 0 rgba(255,244,220,.75)}50%{box-shadow:0 0 0 7px rgba(255,244,220,0)}}
 .chip.on{background:var(--c);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
 .ghost{position:fixed;z-index:50;pointer-events:none;font-size:40px;transform:translate(-50%,-60%);filter:drop-shadow(0 4px 0 rgba(0,0,0,.4))}
 
@@ -144,7 +146,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,52px);lin
 @media(prefers-reduced-motion:reduce){
   .slot svg,#art,.warli .w{transition:none}
   .slot.hit svg,.stage.beat #art{transform:none}
-  .banner b{animation:none}
+  .banner b,.chip.nudge{animation:none}
 }
 </style>
 </head>
@@ -235,6 +237,12 @@ function initAudio(){
   }
   syncBuses();
 }
+function unlockAudio(){
+  try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){}
+  initAudio();
+  try{ if(ac.state!=='running') ac.resume(); const b=ac.createBuffer(1,1,ac.sampleRate),s=ac.createBufferSource(); s.buffer=b; s.connect(ac.destination); s.start(0); }catch(e){}
+}
+['pointerdown','touchend','keydown'].forEach(ev=>window.addEventListener(ev,function once(){unlockAudio();if(ac&&ac.state==='running')['pointerdown','touchend','keydown'].forEach(x=>window.removeEventListener(x,once,true));},true));
 function G(t,peak,a,d){const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d);return g;}
 function GS(t,peak,a,dur,r){const g=ac.createGain(),h=Math.max(a+.005,dur);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.setValueAtTime(peak,t+h);g.gain.linearRampToValueAtTime(.0001,t+h+r);return g;}
 function O(type,f,t,stop){const o=ac.createOscillator();o.type=type;o.frequency.setValueAtTime(f,t);o.start(t);o.stop(stop);return o;}
@@ -289,6 +297,7 @@ h:{
   title:'Dhinchak Dabba', tag:'Awaaz neeche nahi hogi', lang:'en',
   ui:{play:'Bajao',pause:'Ruko',shuf:'Jugaad',clr:'Saaf karo',shr:'Share karo',rec:'Record',empty:'Khaali',muted:'CHUP',
       hint:'Tap a sound to add it. Tap a player to mute. Four secret combos are hiding.',
+      start:'Start with a beat: tap Dhol Uncle below, then add a sound from each shelf.',
       cap:(b,c)=>`"${b}" ne abhi Dhinchak Dabba pe gaana drop kiya. Mix code: ${c}. Tera band isse better hai kya?`},
   groups:['Taal','Sur','Dhun','Masala'],
   demo:[0,-1,7,-1,10,-1,16],
@@ -328,6 +337,7 @@ t:{
   title:'Dabba Kuthu', tag:'டப்பாங்குத்து · Sound-u vera level', lang:'ta',
   ui:{play:'Podu!',pause:'Niruthu',shuf:'Kalakku',clr:'Clear pannu',shr:'Share pannu',rec:'Record',empty:'Kaali',muted:'MUTE',
       hint:'Oru sound-a thattu. Player-a thatti mute pannu. Naalu secret combo irukku.',
+      start:'Mudhalla oru beat: keezha Parai Paandi-a thattu, apram ovvoru shelf-layum onnu podu.',
       cap:(b,c)=>`"${b}" ippo Dabba Kuthu-la oru track drop pannirukkanga. Mix code: ${c}. Un band idha beat pannuma?`},
   groups:['Thaalam','Sruthi','Raagam','Masala'],
   demo:[0,-1,7,-1,14,-1,15],
@@ -398,13 +408,14 @@ function syncBuses(){
   }
 }
 function play(){
-  initAudio();
+  unlockAudio();
   if(playing)return;
   playing=true;t0=ac.currentTime+.08;stepIdx=0;vq=[];
   timer=setInterval(tick,25);tick();
   $('play').textContent=pack.ui.pause;
   requestAnimationFrame(frame);
   track('first_play',{pack:pack.key},true);
+  setTimeout(()=>{if(playing&&ac&&ac.state!=='running'){ac.resume();toast(pack.key==='h'?'Awaaz nahi aa rahi? Silent mode band karo aur dobara tap karo.':'Sound varalaya? Silent mode-a off panni thirumba thattu.');}},700);
   checkCombos();
 }
 function pause(){
@@ -467,7 +478,7 @@ function buildStage(){
     const d=document.createElement('div');d.className='slot';d.dataset.s=i;
     d.innerHTML=`<button class="who" id="who${i}"></button><span class="mt"></span><button class="x" id="x${i}" aria-label="Remove">✕</button>`;
     band.appendChild(d);slotEls.push(d);
-    d.querySelector('.who').addEventListener('click',()=>{ if(slots[i]<0)return; muted[i]=muted[i]?0:1; renderSlot(i); syncBuses(); checkCombos(); });
+    d.querySelector('.who').addEventListener('click',()=>{ if(slots[i]<0){unlockAudio();const c=document.querySelector('.chip.nudge')||document.querySelector('.chip:not(.on)');if(c)c.scrollIntoView({block:'center',behavior:'smooth'});return;} muted[i]=muted[i]?0:1; renderSlot(i); syncBuses(); checkCombos(); });
     d.querySelector('.x').addEventListener('click',()=>{ setSlot(i,-1); });
   }
 }
@@ -482,6 +493,9 @@ function renderSlot(i){
 function renderAll(){
   for(let i=0;i<7;i++)renderSlot(i);
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',slots.indexOf(+c.dataset.i)>=0));
+  const empty=slots.every(x=>x<0);
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('nudge',empty&&+c.dataset.i===0));
+  $('hint').textContent=empty?pack.ui.start:pack.ui.hint;
   syncBuses();
 }
 function setSlot(i,idx){
@@ -740,7 +754,7 @@ function saveUI(){const can=!!dl||standalone;$('saveposter').hidden=!can;$('rec'
 function setPack(k,keep){
   const was=playing;if(playing)pause();
   pack=PACKS[k];comboOn={};sceneRun++;$('banner').classList.remove('show');
-  if(!keep){slots=pack.demo.slice();muted=[0,0,0,0,0,0,0];}
+  if(!keep){slots=[-1,-1,-1,-1,-1,-1,-1];muted=[0,0,0,0,0,0,0];}
   document.documentElement.lang=pack.lang==='ta'?'en-IN':'en-IN';
   $('ttl').textContent=pack.title;$('tag').textContent=pack.tag;
   $('pk-h').setAttribute('aria-pressed',k==='h');$('pk-t').setAttribute('aria-pressed',k==='t');
@@ -757,7 +771,7 @@ function loadMix(m){
 }
 $('pk-h').addEventListener('click',()=>{if(pack.key!=='h')setPack('h');});
 $('pk-t').addEventListener('click',()=>{if(pack.key!=='t'){setPack('t');track('pack_switch',{to:'t'});}});
-$('play').addEventListener('click',()=>{playing?pause():play();});
+$('play').addEventListener('click',()=>{if(!playing&&slots.every(x=>x<0)){unlockAudio();toast(pack.key==='h'?'Pehle neeche se ek sound chuno':'Mudhalla keezha oru sound-a thattu');return;}playing?pause():play();});
 $('clr').addEventListener('click',()=>{slots=[-1,-1,-1,-1,-1,-1,-1];muted=[0,0,0,0,0,0,0];renderAll();checkCombos();});
 $('shuf').addEventListener('click',()=>{
   const pick=[];[0,0,1,2,2,3].forEach(g=>{const c=pack.sounds.map((s,i)=>i).filter(i=>pack.sounds[i][7]===g&&pick.indexOf(i)<0);pick.push(c[Math.floor(Math.random()*c.length)]);});

@@ -3,6 +3,30 @@ function hoi(t,o){V.cons(t,o,'h',.3);V.vox(t+.02,o,330,.16,'o','i',.45,300);}
 function chai(t,o){V.cons(t,o,'c',.3);V.vox(t+.04,o,247,.2,'a','i',.36);}
 function dei(t,o){V.cons(t,o,'d',.35);V.vox(t+.015,o,260,.22,'e','i',.5,200);}
 export default {
+  // display names and looks; ids and order above never change (mix codes depend on them)
+  pat:'kolam',
+  cast:{
+    parai:['Parai Paandi','5 band rani - parai m'],
+    thavil:['Thavil Thatha','4 bald - - dhol mot'],
+    ghatam:['Ghatam Guru','3 bald - - pot t'],
+    davara:['Tumbler Thambi','2 spike - - cup k metal'],
+    kai:['Kai Thattu Akka','3 braid - - clap wi'],
+    sruthi:['Sruthi Chithi','2 lowbun - - box wi'],
+    urumi:['Urumi Machan','5 mund haldi - dhol m'],
+    sauto:['Auto Anna','4 cap khaki - wheel m'],
+    kbass:['Bass Babu','3 dj haldi - speaker d'],
+    morsing:['Morsing Mama','4 short - - whis mt'],
+    nadas:['Nadas Periappa','5 mund white - horn mot'],
+    veena:['Veena Akka','2 gajra - - string wi'],
+    mass:['Mass Anna','4 curly - - brass md'],
+    kuzhal:['Kuzhal Thambi','3 band mor - flute k'],
+    gaana:['Gaana Gopi','2 side - - keys g'],
+    konna:['Thakadimi Sir','3 short - - mic mgt'],
+    dei:['Dei Machi','5 curly - - whis d'],
+    aiyo:['Aiyo Paati','2 bun - - gasp wogi'],
+    visil:['Visil Vicky','3 spike - - whis k'],
+    kaapi:['Kaapi Maami','1 gajra - - cup wi'],
+  },
   key:'t', L:24, bar:12, sd:60/138/3, sw:0, fq:mkfq([0,2,3,5,7,8,10]),
   title:'Dabba Kuthu', tag:'டப்பாங்குத்து · Sound-u vera level', lang:'ta',
   ui:{play:'Podu!',pause:'Niruthu',shuf:'Kalakku',clr:'Clear pannu',shr:'Share pannu',rec:'Record',full:'Stage full. Yaaraiyaavadhu eduthudu.',pick:'Mudhalla keezha oru sound-a thattu',silent:'Sound varalaya? Silent mode-a off panni thirumba thattu.',foot:'SOUND HORN  ·  INDHA CODE PODU, INDHA PAATU KELU',empty:'Kaali',muted:'MUTE',

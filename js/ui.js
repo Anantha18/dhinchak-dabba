@@ -2,10 +2,10 @@
 import {S,$,GHEX,reduce,store,track,toast} from './state.js';
 import {A,V,unlockAudio} from './engine.js';
 import {play,pause,syncBuses,hooks} from './sequencer.js';
-import {charSVG} from './characters.js';
+import {charSVG,faceSVG} from './characters.js';
 import {drawArt,drawTrim} from './art.js';
 import {scene,SC} from './scenes.js';
-import {PACK_LIST,loadPack,hasPack} from './packs.js';
+import {PACK_LIST,loadPack,hasPack,patOf} from './packs.js';
 import {mixCode,parseCode,initShare,isRecording} from './share.js';
 
 let slotEls=[],adds=0,beatFlip=false;
@@ -29,7 +29,7 @@ function renderSlot(i){
   const p=S.pack,el=slotEls[i],sd=S.slots[i]>=0?p.sounds[S.slots[i]]:null;
   el.classList.toggle('on',!!sd);el.classList.toggle('muted',!!sd&&!!S.muted[i]);
   const w=el.querySelector('.who');
-  w.innerHTML=charSVG(sd,i)+`<span class="nm">${sd?sd.name:p.ui.empty}</span>`;
+  w.innerHTML=charSVG(sd,sd?(S.muted[i]?'muted':'on'):'empty',{pat:patOf(p,sd)})+`<span class="nm">${sd?sd.name:p.ui.empty}</span>`;
   w.setAttribute('aria-label',sd?(sd.name+(S.muted[i]?', muted. Tap to unmute':'. Tap to mute')):'Empty spot');
   el.querySelector('.mt').textContent=p.ui.muted;
 }
@@ -63,7 +63,7 @@ function buildTray(){
     const box=sec.querySelector('.chips');
     p.sounds.forEach(s=>{ if(s.g!==gi)return;
       const b=document.createElement('button');b.className='chip';b.dataset.i=s.i;b.id='chip-'+p.key+'-'+s.id;
-      b.innerHTML=`<i aria-hidden="true">${s.emoji}</i><span>${s.name}</span>`;box.appendChild(b);});
+      b.innerHTML=faceSVG(s)+`<i class="eb" aria-hidden="true">${s.emoji}</i><span>${s.name}</span>`;box.appendChild(b);});
     tray.appendChild(sec);
   });
 }
@@ -120,6 +120,7 @@ function fire(cb){
   $('bn1').textContent=cb.title;$('bn2').textContent=cb.sub;
   const b=$('banner');b.classList.remove('show');void b.offsetWidth;b.classList.add('show');
   const run=++SC.run;setTimeout(()=>{if(run===SC.run)b.classList.remove('show');},5200);
+  const stg=$('stage');stg.classList.add('cheer');setTimeout(()=>stg.classList.remove('cheer'),2400);
   if(!reduce)scene(cb.fx,run);
 }
 

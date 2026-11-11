@@ -57,11 +57,38 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,52px);lin
 .slot{position:relative;flex:0 0 14.28%;max-width:14.28%;display:flex;flex-direction:column;align-items:center}
 .slot .who{border:0;background:none;padding:0;width:100%;display:flex;flex-direction:column;align-items:center;border-radius:10px}
 .slot svg{width:100%;max-width:118px;height:auto;display:block;transform-origin:50% 100%;transition:transform .07s ease-out}
-.slot.hit svg{transform:scale(1.07,.93)}
-.slot .mo{display:none}.slot.hit .mo{display:block}.slot.hit .mc{display:none}
-.slot.muted svg{filter:grayscale(1) brightness(.7)}
+.slot.hit svg{transform:scale(1.05,.96)}
+.slot.muted svg{filter:saturate(.3) brightness(.78)}
+/* character kit: parts move on each hit, breathe when idle, blink at random */
+.cs{overflow:visible}
+.cs .al{transform-origin:32px 80px}.cs .ar{transform-origin:68px 80px}.cs .hd{transform-origin:50px 68px}.cs .bd{transform-origin:50px 118px}.cs .pp{transform-box:fill-box;transform-origin:center}
+.cs .al,.cs .ar,.cs .hd,.cs .pp{transition:transform .08s ease-out}
+.cs .mo,.cs .pf{display:none}
+.cs.ao .mo{display:block}.cs.ao .mc{display:none}
+.hit .cs .mo,.hit .cs .pf{display:block}.hit .cs .mc{display:none}
+.hit .an-beat .al{transform:rotate(-16deg)}.hit .an-beat .ar{transform:rotate(16deg)}
+.hit .an-clap .al{transform:rotate(-13deg)}.hit .an-clap .ar{transform:rotate(13deg)}
+.hit .an-strum .ar{transform:rotate(13deg)}.hit .an-strum .hd{transform:rotate(-3deg)}
+.hit .an-puff .hd{transform:scale(1.05)}.hit .cs .pp{transform:scale(1.1)}
+.hit .an-nod .hd{transform:translateY(2.5px) rotate(3deg)}
+.hit .an-sing .hd{transform:translateY(-1.5px) rotate(-5deg)}
+.hit .an-sway .hd{transform:rotate(4deg)}.hit .an-sway .ar{transform:rotate(-6deg)}
+.hit .an-shake .al,.hit .an-shake .ar{transform:translateY(-2px)}
+.on .cs .bd{animation:breathe 2.6s ease-in-out infinite}
+.cs .ey{transform-origin:50px 46px;animation:blink var(--bl,4.8s) infinite;animation-delay:var(--bd,0s)}
+.cs.fc .ey{animation:none}
+.cs .stm{animation:steam 1.8s ease-in-out infinite}
+.cs .sp{animation:twinkle 1.4s ease-in-out infinite;transform-origin:50px 50px}
+.stage.cheer .slot.on:not(.muted) .cs{animation:jump .48s ease-in-out 5}
+.stage.cheer .slot.on:not(.muted) .cs .al{transform:rotate(80deg)}.stage.cheer .slot.on:not(.muted) .cs .ar{transform:rotate(-80deg)}
+.stage.cheer .slot.on:not(.muted) .cs .mo{display:block}.stage.cheer .slot.on:not(.muted) .cs .mc{display:none}
+@keyframes breathe{50%{transform:scaleY(1.03)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+@keyframes steam{0%,100%{opacity:.25;transform:translateY(1px)}50%{opacity:.9;transform:translateY(-2px)}}
+@keyframes twinkle{50%{opacity:.35;transform:scale(.92)}}
+@keyframes jump{50%{transform:translateY(-9px)}}
 .slot.drop .who{background:rgba(255,194,26,.25)}
-.slot .nm{font-size:11px;font-weight:700;line-height:1.15;text-align:center;min-height:26px;padding:2px 2px 0;color:var(--chuna)}
+.slot .nm{text-shadow:0 1px 3px #170e33,0 0 6px #170e33;font-size:11px;font-weight:700;line-height:1.15;text-align:center;min-height:26px;padding:2px 2px 0;color:var(--chuna)}
 .slot:not(.on) .nm{color:#9d90cf;font-weight:400}
 .slot .x{position:absolute;top:0;right:4%;width:24px;height:24px;border-radius:50%;border:2px solid var(--ink);background:var(--chuna);color:var(--ink);font-size:13px;font-weight:700;line-height:1;padding:0;display:none}
 .slot.on .x{display:block}
@@ -98,7 +125,9 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,52px);lin
 .grp h2{margin:0 0 5px;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--c)}
 .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .chip{touch-action:manipulation;user-select:none;-webkit-user-select:none;border:2px solid var(--c);background:var(--panel);border-radius:12px;padding:6px 2px 5px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;min-width:0}
-.chip i{font-style:normal;font-size:23px;line-height:1.1}
+.chip{position:relative}
+.chip .fc{width:40px;height:40px;display:block;flex:0 0 auto}
+.chip .eb{position:absolute;top:2px;right:3px;font-style:normal;font-size:13px;line-height:1;filter:drop-shadow(0 1px 0 rgba(0,0,0,.5))}
 .chip span{font-size:10px;line-height:1.12;font-weight:600;text-align:center;overflow-wrap:break-word;max-width:100%}
 .chip.nudge{animation:nudge 1.1s ease-in-out infinite;border-color:var(--chuna)}
 @keyframes nudge{0%,100%{box-shadow:0 0 0 0 rgba(255,244,220,.75)}50%{box-shadow:0 0 0 7px rgba(255,244,220,0)}}
@@ -146,7 +175,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,52px);lin
 @media(prefers-reduced-motion:reduce){
   .slot svg,#art,.warli .w{transition:none}
   .slot.hit svg,.stage.beat #art{transform:none}
-  .banner b,.chip.nudge{animation:none}
+  .banner b,.chip.nudge,.cs *,.cs,.stage.cheer .slot .cs{animation:none!important}
 }
 </style>
 </head>

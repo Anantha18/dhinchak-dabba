@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dhinchak Dabba character sheet</title>
+<style>
+body{background:#170e33;color:#fff4dc;font:14px system-ui,sans-serif;margin:16px}
+h2{color:#ffc21a;margin:22px 0 8px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:10px}
+.c{background:#2a1b57;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:4px}
+.r{display:flex;align-items:flex-end;gap:6px}.r svg{flex:0 0 auto}
+.b{font-weight:700}.s{font-size:11px;color:#b3a6e6}
+.cs{overflow:visible}.cs .mo,.cs .pf{display:none}.cs.ao .mo{display:block}.cs.ao .mc{display:none}
+.hit .cs .mo,.hit .cs .pf{display:block}.hit .cs .mc{display:none}
+.cs .al{transform-origin:32px 80px}.cs .ar{transform-origin:68px 80px}.cs .hd{transform-origin:50px 68px}.cs .pp{transform-box:fill-box;transform-origin:center}
+.hit .an-beat .al{transform:rotate(-16deg)}.hit .an-beat .ar{transform:rotate(16deg)}.hit .an-clap .al{transform:rotate(-13deg)}.hit .an-clap .ar{transform:rotate(13deg)}
+.hit .an-strum .ar{transform:rotate(13deg)}.hit .an-puff .hd{transform:scale(1.05)}.hit .cs .pp{transform:scale(1.1)}.hit .an-sing .hd{transform:translateY(-1.5px) rotate(-5deg)}.hit .an-nod .hd{transform:translateY(2.5px) rotate(3deg)}
+</style></head><body>
+<h1>Character sheet</h1><p class="s">Each card: idle 120px · hit 120px · muted 120px · idle 50px · button face 40px</p><div id="out"></div>
+<script type="module">
+import {PACK_LIST,loadPack,patOf} from '../js/packs.js';
+import {charSVG,faceSVG} from '../js/characters.js';
+const out=document.getElementById('out'),sz=(svg,w)=>svg.replace('<svg ','<svg width="'+w+'" ');
+const only=new URLSearchParams(location.search).get('p');
+for(const pk of PACK_LIST){ if(only&&only.indexOf(pk.k)<0)continue;
+  const p=await loadPack(pk.k);let h=`<h2>${p.title} (${pk.k})</h2><div class="g">`;
+  h+=`<div class="c"><div class="r">${sz(charSVG(null,'empty'),120)}${sz(charSVG(null,'empty'),50)}</div><div class="b">Empty slot</div></div>`;
+  for(const s of p.sounds){const o={pat:patOf(p,s)};
+    h+=`<div class="c"><div class="r">${sz(charSVG(s,'on',o),120)}<span class="hit">${sz(charSVG(s,'on',o),120)}</span>${sz(charSVG(s,'muted',o),120)}${sz(charSVG(s,'on',o),50)}${sz(faceSVG(s),40)}</div><div class="b">${s.emoji} ${s.name}</div><div class="s">${s.id} · ${s.ch}</div></div>`;}
+  out.insertAdjacentHTML('beforeend',h+'</div>');
+}
+window.SHEET=true;
+</script></body></html>

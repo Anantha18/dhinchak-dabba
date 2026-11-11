@@ -2,7 +2,8 @@
 import {S,$,INK,GHEX,track,toast} from './state.js';
 import {A,initAudio} from './engine.js';
 import {play} from './sequencer.js';
-import {hasPack} from './packs.js';
+import {hasPack,patOf} from './packs.js';
+import {charSVG} from './characters.js';
 export function mixCode(){return 'mix-'+S.pack.key+'-'+S.slots.map(s=>s<0?'x':s.toString(36)).join('');}
 export function parseCode(str){
   const m=/mix-([a-z])-([0-9a-z]{7})/i.exec(str||'');if(!m||!hasPack(m[1].toLowerCase()))return null;
@@ -13,22 +14,33 @@ export function bandName(){
   return p.bandA[h%p.bandA.length]+' '+p.bandB[Math.floor(h/97)%p.bandB.length];
 }
 export function wrapText(c,text,x,y,maxW,lh){const words=text.split(' ');let line='',yy=y;words.forEach(w=>{const t=line?line+' '+w:w;if(c.measureText(t).width>maxW&&line){c.fillText(line,x,yy);line=w;yy+=lh;}else line=t;});c.fillText(line,x,yy);return yy+lh;}
-function drawPoster(){
-  const p=S.pack,cv=$('poster'),c=cv.getContext('2d'),W=1080,H=1350;
-  c.fillStyle=INK;c.fillRect(0,0,W,H);
+function svgImg(svg){return new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});}
+export function posterBase(c,W,H){
+  const g=c.createRadialGradient(W/2,H*.45,60,W/2,H*.45,H*.75);g.addColorStop(0,'#3b2380');g.addColorStop(.6,'#24145a');g.addColorStop(1,INK);
+  c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.save();c.globalAlpha=.16;for(let r=0;r<3;r++){const n=16+r*8,R=250+r*130;for(let k=0;k<n;k++){const a=k/n*Math.PI*2+r*.2;c.beginPath();c.ellipse(W/2+Math.cos(a)*R,H*.46+Math.sin(a)*R,46,18,a,0,7);c.fillStyle=['#ff3d86','#ffc21a','#12c2b0'][(k+r)%3];c.fill();}}c.restore();
   ['#12c2b0','#ff3d86','#ffc21a'].forEach((col,i)=>{c.strokeStyle=col;c.lineWidth=16;c.strokeRect(24+i*18,24+i*18,W-48-i*36,H-48-i*36);});
-  for(let x=110;x<W-90;x+=44){c.beginPath();c.moveTo(x,96);c.lineTo(x+22,132);c.lineTo(x+44,96);c.closePath();c.fillStyle=(x/44|0)%2?'#ff6a2b':'#2fa84a';c.fill();}
-  c.textAlign='center';c.fillStyle='#12c2b0';c.font='700 34px "Hind Madurai",sans-serif';c.fillText(p.title.toUpperCase()+'  PRESENTS',W/2,220);
-  c.font='92px "Yatra One","Hind Madurai",sans-serif';
-  c.fillStyle='#ff3d86';let y=wrapText(c,bandName(),W/2+5,345,860,104);
-  c.fillStyle='#ffc21a';wrapText(c,bandName(),W/2,340,860,104);
+  for(let x=110,k=0;x<W-90;x+=44,k++){c.beginPath();c.moveTo(x,96);c.lineTo(x+22,132);c.lineTo(x+44,96);c.closePath();c.fillStyle=k%2?'#ff8a1f':'#2fa84a';c.fill();}
+  c.textAlign='center';
+}
+let posterRun=0;
+async function drawPoster(){
+  const p=S.pack,cv=$('poster'),c=cv.getContext('2d'),W=1080,H=1350,run=++posterRun;
   const act=S.slots.map(s=>s>=0?p.sounds[s]:null).filter(Boolean);
-  y=Math.max(y+30,700);
-  const cols=Math.min(4,Math.max(1,act.length)),cw=860/cols;
-  act.forEach((s,i)=>{const cx=110+cw*(i%cols)+cw/2,cy=y+Math.floor(i/cols)*230;
-    c.beginPath();c.arc(cx,cy,74,0,7);c.fillStyle=GHEX[s.g];c.fill();c.lineWidth=6;c.strokeStyle='#fff4dc';c.stroke();
-    c.font='78px serif';c.fillStyle='#000';c.fillText(s.emoji,cx,cy+28);
-    c.font='600 26px "Hind Madurai",sans-serif';c.fillStyle='#fff4dc';wrapText(c,s.name,cx,cy+116,cw-16,30);});
+  const ims=await Promise.all(act.map(s=>svgImg(charSVG(s,'on',{pat:patOf(p,s),stat:1}))));
+  if(run!==posterRun)return;
+  posterBase(c,W,H);
+  c.fillStyle='#12c2b0';c.font='700 34px "Hind Madurai",sans-serif';c.fillText(p.title.toUpperCase()+'  PRESENTS',W/2,215);
+  c.font='88px "Yatra One","Hind Madurai",sans-serif';
+  c.fillStyle='#ff3d86';let y=wrapText(c,bandName(),W/2+5,335,860,100);
+  c.fillStyle='#ffc21a';wrapText(c,bandName(),W/2,330,860,100);
+  const rows=act.length>4?[act.slice(0,4),act.slice(4)]:[act],cw=act.length>4?205:Math.min(250,860/Math.max(1,act.length)),ch=cw*1.3;
+  let top=Math.max(y+10,rows.length>1?560:640),n=0;
+  rows.forEach(row=>{const x0=W/2-row.length*cw/2;
+    row.forEach((s,i)=>{const im=ims[n++],x=x0+i*cw;
+      if(im)c.drawImage(im,x+cw*.06,top,cw*.88,ch*.88);
+      c.font='700 25px "Hind Madurai",sans-serif';c.fillStyle='#fff4dc';wrapText(c,s.name,x+cw/2,top+ch*.88+30,cw-10,28);});
+    top+=ch+62;});
   c.fillStyle='#fff4dc';c.fillRect(110,H-212,860,84);
   c.fillStyle=INK;c.font='700 40px ui-monospace,Menlo,monospace';c.fillText(mixCode(),W/2,H-156);
   c.fillStyle='#12c2b0';c.font='700 28px "Hind Madurai",sans-serif';c.fillText(p.ui.foot,W/2,H-92);

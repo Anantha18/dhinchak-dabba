@@ -14,7 +14,7 @@ export function bandName(){
   return p.bandA[h%p.bandA.length]+' '+p.bandB[Math.floor(h/97)%p.bandB.length];
 }
 export function wrapText(c,text,x,y,maxW,lh){const words=text.split(' ');let line='',yy=y;words.forEach(w=>{const t=line?line+' '+w:w;if(c.measureText(t).width>maxW&&line){c.fillText(line,x,yy);line=w;yy+=lh;}else line=t;});c.fillText(line,x,yy);return yy+lh;}
-function svgImg(svg){return new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});}
+export function svgImg(svg){return new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});}
 export function posterBase(c,W,H){
   const g=c.createRadialGradient(W/2,H*.45,60,W/2,H*.45,H*.75);g.addColorStop(0,'#3b2380');g.addColorStop(.6,'#24145a');g.addColorStop(1,INK);
   c.fillStyle=g;c.fillRect(0,0,W,H);

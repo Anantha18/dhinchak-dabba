@@ -1,7 +1,7 @@
 // Pack registry. Packs load lazily as ES modules and are normalised to sound objects.
 export const PACK_LIST=[
   {k:'h',label:'Hinglish'},
-  {k:'t',label:'தமிழ்'}
+  {k:'t',label:'தமிழ்',lang:'ta'}
 ];
 const cache={};
 export const patOf=(p,s)=>Array.isArray(p.pat)?p.pat[Math.min(s?s.g:0,p.pat.length-1)]:(p.pat||'madhu');

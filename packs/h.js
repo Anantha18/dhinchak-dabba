@@ -33,7 +33,8 @@ export default {
       hint:'Tap a sound to add it. Tap a player to mute. Four secret combos are hiding.',
       start:'Start with a beat: tap Dhol Dada below, then add a sound from each shelf.',
       cap:(b,c)=>`"${b}" ne abhi Dhinchak Dabba pe gaana drop kiya. Mix code: ${c}. Tera band isse better hai kya?`},
-  groups:['Taal','Sur','Dhun','Masala'],
+  groups:['Taal','Sur','Dhun','Masala','Chhupa Rustam'],
+  theme:{art:'rangoli',toran:'mango'},
   demo:[0,-1,7,-1,10,-1,16],
   sounds:[
    ['dhol','Dhol Uncle','🥁','turban',1,.08,drum('K..tK.t.K..tK.tt K..tK.t.K.tKt.tt',{K:(t,o)=>{V.kick(t,o,.95,170,55,.32);V.tak(t,o,.3,900);},t:(t,o)=>V.tak(t,o,.5,950)})],
@@ -55,7 +56,8 @@ export default {
    ['balle','Balle Squad','🙌','turban',1,.25,at(32,{4:hoi,12:hoi,20:hoi,26:(t,o)=>V.vox(t,o,294,.4,'o','e',.42,392),30:hoi})],
    ['haww','Log Kya Kahenge','😱','bun',0,.3,at(32,{8:(t,o)=>{V.cons(t,o,'h',.3);V.vox(t+.03,o,300,.55,'a','o',.36,560);},24:(t,o)=>{V.cons(t,o,'h',.3);V.vox(t+.03,o,300,.75,'a','o',.36,600);},29:(t,o)=>V.tak(t,o,.3,2400,.02),30:(t,o)=>V.tak(t,o,.3,2400,.02)})],
    ['chai','Chai-Chai Wala','☕','cap',1,.2,at(32,{0:chai,3:chai,16:(t,o)=>{V.cons(t,o,'c',.3);V.vox(t+.04,o,220,.85,'a','i',.36,330);},22:chai})],
-   ['horn','Horn OK Please','📢','shades',1,.15,at(32,{14:(t,o)=>V.horn(t,o,.09),15:(t,o)=>V.horn(t,o,.09),26:(t,o)=>V.horn(t,o,.09),28:(t,o)=>V.horn(t,o,.42)})]
+   ['horn','Horn OK Please','📢','shades',1,.15,at(32,{14:(t,o)=>V.horn(t,o,.09),15:(t,o)=>V.horn(t,o,.09),26:(t,o)=>V.horn(t,o,.09),28:(t,o)=>V.horn(t,o,.42)})],
+   ['been','Been Bhaisaab','🐍','3 safa haldi maroon horn mz',0,.3,mel(32,4,[[0,4,2],[2,5,1],[3,4,1],[4,3,2],[6,4,2],[8,7,3],[11,6,1],[12,4,4],[16,4,2],[18,5,1],[19,4,1],[20,3,2],[22,1,2],[24,3,2],[26,4,2],[28,0,4]],(t,o,f,d,p)=>V.reed(t,o,f,d*.95,.17,p||f*.94))]
   ],
   combos:[
    {id:'baraat',need:['dhol','brass','horn'],name:'Baraat Mode',title:'BARAAT AA GAYI!',sub:'Ghodi ready hai. Naagin dance compulsory.',fx:'fire'},

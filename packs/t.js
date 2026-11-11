@@ -33,7 +33,8 @@ export default {
       hint:'Oru sound-a thattu. Player-a thatti mute pannu. Naalu secret combo irukku.',
       start:'Mudhalla oru beat: keezha Parai Paandi-a thattu, apram ovvoru shelf-layum onnu podu.',
       cap:(b,c)=>`"${b}" ippo Dabba Kuthu-la oru track drop pannirukkanga. Mix code: ${c}. Un band idha beat pannuma?`},
-  groups:['Thaalam','Sruthi','Raagam','Masala'],
+  groups:['Thaalam','Sruthi','Raagam','Masala','Secret Aalu'],
+  theme:{art:'kolam',toran:'mango'},
   demo:[0,-1,7,-1,14,-1,15],
   sounds:[
    ['parai','Parai Paandi','🥁','band',1,.08,drum('D.tD.tDttD.t D.tD.tDtDtDt',{D:(t,o)=>{V.kick(t,o,.75,260,110,.15);V.tak(t,o,.4,500);},t:(t,o)=>V.tak(t,o,.55,1300,.05)})],
@@ -55,7 +56,8 @@ export default {
    ['dei','Dei Machi','🤙','shades',1,.25,at(24,{9:dei,15:dei,21:(t,o)=>V.vox(t,o,240,.4,'a','e',.42,330)})],
    ['aiyo','Aiyo Paati','👵','bun',0,.3,at(24,{6:(t,o,sd)=>{V.vox(t,o,440,.14,'a','i',.36);V.vox(t+sd*2,o,392,.42,'o','o',.36,294);},18:(t,o)=>V.vox(t,o,440,.11,'a','i',.36),19:(t,o)=>V.vox(t,o,392,.11,'o','o',.36),20:(t,o)=>V.vox(t,o,392,.11,'o','o',.36),21:(t,o)=>V.vox(t,o,349,.11,'o','o',.36),22:(t,o)=>V.vox(t,o,330,.36,'o','u',.36,247)})],
    ['visil','FDFS Visil','🎬','shades',0,.3,at(24,{10:(t,o)=>V.whistle(t,o,1800,3200,.22),20:(t,o)=>V.whistle(t,o,2000,3400,.17),22:(t,o)=>V.whistle(t,o,3400,1800,.34)})],
-   ['kaapi','Filter Kaapi','☕','malli',0,.3,at(24,{0:(t,o,sd)=>V.pour(t,o,sd*5,.3),18:(t,o)=>V.pour(t,o,.22,.28),20:(t,o)=>V.vox(t,o,196,.5,'a','a',.3,165)})]
+   ['kaapi','Filter Kaapi','☕','malli',0,.3,at(24,{0:(t,o,sd)=>V.pour(t,o,sd*5,.3),18:(t,o)=>V.pour(t,o,.22,.28),20:(t,o)=>V.vox(t,o,196,.5,'a','a',.3,165)})],
+   ['bullet','Bullet Raja','🏍️','4 curly - maroon wheel mdz',0,.05,mel(24,2,[[0,0],[2,0],[3,0],[5,0],[6,0],[8,0],[9,0],[11,0],[12,-1],[14,-1],[15,-1],[17,-1],[18,-2],[20,-2],[21,-3],[23,-3]],(t,o,f,d)=>{V.kick(t,o,.45,130,58,.11);V.putt(t,o,f,d*.7,.3);})]
   ],
   combos:[
    {id:'kuthu',need:['parai','nadas','dei'],name:'Marana Kuthu',title:'MARANA KUTHU!',sub:'Tharai local. Lungi-ya madichu kattu.',fx:'fire'},

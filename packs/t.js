@@ -10,7 +10,7 @@ export default {
     thavil:['Thavil Thatha','4 bald - - dhol mot'],
     ghatam:['Ghatam Guru','3 bald - - pot t'],
     davara:['Tumbler Thambi','2 spike - - cup k metal'],
-    kai:['Kai Thattu Akka','3 braid - - clap wi'],
+    kai:['Kaithattu Akka','3 braid - - clap wi'],
     sruthi:['Sruthi Chithi','2 lowbun - - box wi'],
     urumi:['Urumi Machan','5 mund haldi - dhol m'],
     sauto:['Auto Anna','4 cap khaki - wheel m'],

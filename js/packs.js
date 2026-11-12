@@ -4,7 +4,9 @@ export const PACK_LIST=[
   {k:'t',label:'தமிழ்',lang:'ta'},
   {k:'p',label:'ਪੰਜਾਬੀ',lang:'pa'},
   {k:'g',label:'ગુજરાતી',lang:'gu'},
-  {k:'e',label:'తెలుగు',lang:'te'}
+  {k:'e',label:'తెలుగు',lang:'te'},
+  {k:'s',label:'Shaadi 💍',season:1},
+  {k:'v',label:'Harvest 🌾',season:2}
 ];
 const cache={};
 export const patOf=(p,s)=>Array.isArray(p.pat)?p.pat[Math.min(s?s.g:0,p.pat.length-1)]:(p.pat||'madhu');
